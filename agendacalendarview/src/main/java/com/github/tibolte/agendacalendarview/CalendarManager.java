@@ -46,6 +46,8 @@ public class CalendarManager {
 
     private static CalendarManager mInstance;
 
+    private boolean load_once = false;
+
     private Context mContext;
     private Locale mLocale;
     private Calendar mToday = Calendar.getInstance();
@@ -255,7 +257,15 @@ public class CalendarManager {
             }
         }
 
-        BusProvider.getInstance().send(new Events.EventsFetched());
+
+        if (load_once == false) {
+            BusProvider.getInstance().send(new Events.EventsFetched());
+            load_once = true;
+        } else {
+            BusProvider.getInstance().send(new Events.ForecastFetched());
+        }
+
+        //BusProvider.getInstance().send(new Events.EventsFetched());
         Log.d(LOG_TAG, "CalendarEventTask finished");
 
         // TODO: remove weather part from the project
@@ -528,6 +538,15 @@ public class CalendarManager {
         }
         return filteredCalendarList;
     }
+
+    public Calendar getmMinCal() {
+        return mMinCal;
+    }
+
+    public Calendar getmMaxCal() {
+        return mMaxCal;
+    }
+
 
     // endregion
 }

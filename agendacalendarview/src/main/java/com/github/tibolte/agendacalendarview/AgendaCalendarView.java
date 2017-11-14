@@ -210,5 +210,12 @@ public class AgendaCalendarView extends FrameLayout implements StickyListHeaders
         adapter.addEventRenderer(renderer);
     }
 
+    public void refresh(List<CalendarEvent> eventList) {
+        CalendarManager m = CalendarManager.getInstance(getContext());
+        m.buildCal(m.getmMinCal(), m.getmMaxCal(), m.getLocale());
+        m.loadEvents(eventList);
+    }
+
+
     // endregion
 }

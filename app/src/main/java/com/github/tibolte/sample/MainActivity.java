@@ -1,16 +1,18 @@
 package com.github.tibolte.sample;
 
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
+
 import com.github.tibolte.agendacalendarview.AgendaCalendarView;
 import com.github.tibolte.agendacalendarview.CalendarPickerController;
 import com.github.tibolte.agendacalendarview.models.BaseCalendarEvent;
 import com.github.tibolte.agendacalendarview.models.CalendarEvent;
 import com.github.tibolte.agendacalendarview.models.DayItem;
-
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements CalendarPickerCon
     Toolbar mToolbar;
     @Bind(R.id.agenda_calendar_view)
     AgendaCalendarView mAgendaCalendarView;
+    List<CalendarEvent> eventList = new ArrayList<>();
 
     // region Lifecycle methods
 
@@ -48,16 +51,40 @@ public class MainActivity extends AppCompatActivity implements CalendarPickerCon
         minDate.set(Calendar.DAY_OF_MONTH, 1);
         maxDate.add(Calendar.YEAR, 1);
 
-        List<CalendarEvent> eventList = new ArrayList<>();
         mockList(eventList);
 
         mAgendaCalendarView.init(eventList, minDate, maxDate, Locale.getDefault(), this);
         mAgendaCalendarView.addEventRenderer(new DrawableEventRenderer());
+
+        /******************************************
+         * FLOTTING BUTTON - REFRESH EVENT
+         *****************************************/
+        FloatingActionButton fabRefresh = (FloatingActionButton) this.findViewById(R.id.planning_refresh);
+        fabRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                addEvent();
+                mAgendaCalendarView.refresh(eventList);
+
+            }
+        });
+
     }
 
     // endregion
 
     // region Interface - CalendarPickerController
+
+    private void addEvent() {
+        Calendar startTime2 = Calendar.getInstance();
+        startTime2.add(Calendar.DAY_OF_YEAR, 1);
+        Calendar endTime2 = Calendar.getInstance();
+        endTime2.add(Calendar.DAY_OF_YEAR, 3);
+        BaseCalendarEvent event2 = new BaseCalendarEvent("TEST", "TEST", "TEST",
+                ContextCompat.getColor(this, R.color.blue_dark), startTime2, endTime2, true);
+        eventList.add(event2);
+    }
 
     @Override
     public void onDaySelected(DayItem dayItem) {
